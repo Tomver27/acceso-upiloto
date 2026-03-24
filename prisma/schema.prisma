@@ -75,7 +75,7 @@ model Career {
 model DocumentType {
   id             Int    @id @default(autoincrement())
   name           String
-  nameNormalized String @map("name_normalized")
+  nameNormalized String @unique @map("name_normalized")
   users          User[]
 
   @@map("document_types")
@@ -83,7 +83,7 @@ model DocumentType {
 
 model Reason {
   id          Int     @id @default(autoincrement())
-  description String
+  description String  @unique
   entries     Entry[]
 
   @@map("reasons")

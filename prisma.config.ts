@@ -11,6 +11,9 @@ export default defineConfig({
   datasource: {
     url: dbUrl,
   },
+  migrations: {
+    seed: 'ts-node --compiler-options {"module":"CommonJS"} prisma/seed.ts',
+  },
   migrate: {
     adapter: async () => {
       const client = createClient({ url: dbUrl })
