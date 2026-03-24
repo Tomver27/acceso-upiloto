@@ -1,13 +1,90 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
 }
 
 datasource db {
   provider = "sqlite"
+}
+
+model User {
+  id             Int      @id @default(autoincrement())
+  document       String
+  code           String?
+  cardUuid       String?  @unique @map("card_uuid")
+  createdAt      DateTime @default(now()) @map("created_at")
+  idDocumentType Int      @map("id_document_type")
+  idRole         Int      @map("id_role")
+  idCareer       Int?     @map("id_career")
+
+  role         Role         @relation(fields: [idRole], references: [id])
+  career       Career?      @relation(fields: [idCareer], references: [id])
+  documentType DocumentType @relation(fields: [idDocumentType], references: [id])
+  entries      Entry[]
+  lab          Lab?
+
+  @@map("users")
+}
+
+model Entry {
+  id        Int       @id @default(autoincrement())
+  cardUuid  String    @map("card_uuid")
+  granted   Boolean
+  startDate DateTime  @map("start_date")
+  endDate   DateTime? @map("end_date")
+  idUser    Int?      @map("id_user")
+  idLab     Int       @map("id_lab")
+  idReason  Int       @map("id_reason")
+
+  user   User?  @relation(fields: [idUser], references: [id])
+  lab    Lab    @relation(fields: [idLab], references: [id])
+  reason Reason @relation(fields: [idReason], references: [id])
+
+  @@map("entries")
+}
+
+model Lab {
+  id       Int     @id @default(autoincrement())
+  location String
+  name     String?
+  idUser   Int?    @unique @map("id_user")
+
+  assignee User?   @relation(fields: [idUser], references: [id])
+  entries  Entry[]
+
+  @@map("labs")
+}
+
+model Role {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String
+  users       User[]
+
+  @@map("roles")
+}
+
+model Career {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
+
+  @@map("careers")
+}
+
+model DocumentType {
+  id             Int    @id @default(autoincrement())
+  name           String
+  nameNormalized String @map("name_normalized")
+  users          User[]
+
+  @@map("document_types")
+}
+
+model Reason {
+  id          Int     @id @default(autoincrement())
+  description String
+  entries     Entry[]
+
+  @@map("reasons")
 }
