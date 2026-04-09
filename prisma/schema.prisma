@@ -9,6 +9,9 @@ datasource db {
 
 model User {
   id             Int      @id @default(autoincrement())
+  firstName      String?  @map("first_name")
+  middleName     String?  @map("middle_name")
+  lastName       String?  @map("last_name")
   document       String
   code           String?
   cardUuid       String?  @unique @map("card_uuid")
